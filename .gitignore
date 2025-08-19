@@ -1,0 +1,13 @@
+/.vs
+/obj
+/bin
+*/bin
+*/obj
+*.user
+*/.vs
+/publish
+*.apk
+*.zip
+*.keystore
+*.keystore
+*.pfx

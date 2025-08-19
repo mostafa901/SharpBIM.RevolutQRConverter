@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slov 2 Revolut QR Convert</title>
+    <base href="./" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/x-icon" href="SharpBim_55-55.ico" />
+
+    <!--If you add any scoped CSS files, uncomment the following to load them-->
+    <!--<link href="SharpBIM.RevolutQRConverter.Web.styles.css" rel="stylesheet" />-->
+</head>
+
+<body style="background-color: #191919">
+
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
+    </script>
+
+    <script>
+        window.copyText = async (text) => {
+            await navigator.clipboard.writeText(text);
+        }
+    </script>
+
+    <script>
+        window.downloadFile=async(fileName) =>{
+            const link = document.createElement('a');
+            link.href = '/downloads/' + fileName;   // path to your file
+            link.download = fileName; // optional: name for the file
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+
+        let html5QrCode;
+
+        window.initCameraList = async () => {
+            const cameras = await Html5Qrcode.getCameras();
+            const select = document.getElementById("cameraSelect");
+            if (select) select.innerHTML = "";
+
+            if (cameras && cameras.length) {
+                cameras.forEach((camera) => {
+                    const option = document.createElement("option");
+                    option.value = camera.id;
+                    option.text = camera.label || `Camera ${camera.id}`;
+                    if (select != null)
+                        select.appendChild(option);
+                });
+            }
+        }
+        window.copyText = async (text) => {
+            await navigator.clipboard.writeText(text);
+        };
+        window.checkCameraPermission = async (mediatype) => {
+            try {
+                // Only 'camera', 'microphone', or 'geolocation' are valid names
+                if (!["camera", "microphone", "geolocation"].includes(mediatype)) {
+                    throw new Error("Invalid media type. Use 'camera'.");
+                }
+
+                const permissionStatus = await navigator.permissions.query({ name: mediatype });
+                console.log('Camera permission state:', permissionStatus.state); // 'granted', 'denied', or 'prompt'
+
+                // Listen for changes
+                permissionStatus.onchange = () => {
+                    console.log('Camera permission changed to:', permissionStatus.state);
+                };
+
+                return permissionStatus.state;
+            } catch (err) {
+                console.error('Permission API not supported or error:', err);
+                return err.toString(); // fixed from err.stringify()
+            }
+        };
+
+
+        window.startQrScanner = (dotnetHelper) => {
+            const select = document.getElementById("cameraSelect");
+            const cameraId = select.value; // chosen camera
+
+            html5QrCode = new Html5Qrcode("reader");
+
+            html5QrCode.start(
+                cameraId,
+                { fps: 10, qrbox: 550, },
+                (decodedText, decodedResult) => {
+                    // Pass decodedText as usual
+                    dotnetHelper.invokeMethodAsync('ReceiveQrCode', decodedText);
+
+                    // Also try passing full decodedResult as JSON string if exists
+                    if (decodedResult) {
+                        try {
+                            dotnetHelper.invokeMethodAsync('ReceiveFullResult', JSON.stringify(decodedResult));
+                        } catch (e) {
+                            console.error("Failed to send full result:", e);
+                        }
+                    }
+
+                    html5QrCode.stop();
+                },
+                (errorMessage) => {
+                    // Optional: handle errors here or log
+                }
+            ).catch(err => console.error(err));
+        };
+
+        //// Run once at page load to fill the dropdown
+        // document.addEventListener("DOMContentLoaded", initCameraList);
+    </script>
+ 
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script>
+        window.GetQR = (qrText) => {
+
+            document.getElementById("qrcode").innerHTML = "";
+
+            // Create QR code
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: qrText,
+                width: 256,
+                height: 256,
+               
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Return the generated image as Base64
+            return document.querySelector("#qrcode img").src;
+        };
+    </script>
+
+
+    <script src="_framework/blazor.webassembly.js"></script>
+
+</body>
+
+</html>

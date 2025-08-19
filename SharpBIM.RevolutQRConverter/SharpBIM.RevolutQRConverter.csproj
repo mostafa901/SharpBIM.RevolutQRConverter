@@ -1,0 +1,169 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFrameworks>net9.0-android;net9.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
+
+        <!-- Note for MacCatalyst:
+            The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
+            When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
+            The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
+            either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
+        <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
+        <DefineConstants Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">$(DefineConstants);ANDROID</DefineConstants>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharpBIM.RevolutQRConverter</RootNamespace>
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <EnableDefaultCssItems>false</EnableDefaultCssItems>
+        <Nullable>enable</Nullable>
+
+        <!-- Display name -->
+        <ApplicationTitle>SharpBIM.RevolutQRConverter</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.companyname.sharpbim.RevolutQRConverter</ApplicationId>
+
+        <!-- Versions -->
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationVersion>1</ApplicationVersion>
+
+        <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
+        <WindowsPackageType>MSIX</WindowsPackageType>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Title>UPN Conv</Title>
+        <Company>SharpBIM</Company>
+        <Product>UPN Conv</Product>
+        <Description>a helper tool to convert Slovenian UPN QR Code to a Revolut compatible one</Description>
+        <Copyright>SharpBIM 2025</Copyright>
+        <AndroidSigningKeyStore>SharpBIM.keystore</AndroidSigningKeyStore>
+        <NeutralLanguage>en</NeutralLanguage>
+        <PackageProjectUrl>https://slov-qr-revolout.tryasp.net/</PackageProjectUrl>
+        <PackageIcon>SharpBim 128x128.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/mostafa901/SharpBIM.RevolutQRConverter</RepositoryUrl>
+        <PackageReleaseNotes>initial Release</PackageReleaseNotes>
+    </PropertyGroup>
+
+
+
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-maccatalyst|AnyCPU'">
+        <ApplicationId>com.sharpbim.revolutqrconverter</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-windows10.0.19041.0|AnyCPU'">
+        <ApplicationId>com.sharpbim.revolutqrconverter</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-maccatalyst|AnyCPU'">
+        <ApplicationId>com.sharpbim.revolutqrconverter</ApplicationId>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-windows10.0.19041.0|AnyCPU'">
+        <ApplicationId>com.sharpbim.revolutqrconverter</ApplicationId>
+        <!--<PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>true</SelfContained>
+        <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+        -->
+        <!-- or win10-arm64, win-x86 -->
+        <!--
+        <PublishTrimmed>false</PublishTrimmed>-->
+        <!-- can try true, but may break MAUI -->
+
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+        <AndroidKeyStore>True</AndroidKeyStore>
+        <AndroidSigningStorePass>$(KeyStorePassword)</AndroidSigningStorePass>
+        <AndroidSigningKeyPass>$(KeyStorePassword)</AndroidSigningKeyPass>
+        <AndroidSigningKeyAlias>SharpBIM</AndroidSigningKeyAlias>
+        <AndroidPackageFormat>apk</AndroidPackageFormat>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
+        <AndroidSigningStorePass>$(KeyStorePassword)</AndroidSigningStorePass>
+        <AndroidSigningKeyPass>$(KeyStorePassword)</AndroidSigningKeyPass>
+        <AndroidSigningKeyAlias>SharpBIM</AndroidSigningKeyAlias>
+    </PropertyGroup>
+
+
+
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" />
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#1e1e1e" BaseSize="500,120" />
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*" />
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <None Remove="Resources\Splash\Splash.psd" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <MauiImage Include="Resources\Splash\splash.png" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <None Include="..\..\blog\SharpBim\SharpBim 128x128.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
+        <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />
+        <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharpBIM.RevolutQRConverter.Shared\SharpBIM.RevolutQRConverter.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <MauiXaml Update="App.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </MauiXaml>
+        <MauiXaml Update="Pages\Scanner.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Pages\Scanner.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </None>
+    </ItemGroup>
+
+</Project>

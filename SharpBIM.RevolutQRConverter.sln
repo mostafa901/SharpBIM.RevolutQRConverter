@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.RevolutQRConverter", "SharpBIM.RevolutQRConverter\SharpBIM.RevolutQRConverter.csproj", "{6E95215E-59E2-4085-2118-8A563B39C466}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.RevolutQRConverter.Shared", "SharpBIM.RevolutQRConverter.Shared\SharpBIM.RevolutQRConverter.Shared.csproj", "{48D366CE-8CEE-1DC1-1A00-E1D4E6FA63CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBIM.RevolutQRConverter.Web", "SharpBIM.RevolutQRConverter.Web\SharpBIM.RevolutQRConverter.Web.csproj", "{64519B76-C080-F68E-9D7C-274BF37AA4FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E95215E-59E2-4085-2118-8A563B39C466}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{48D366CE-8CEE-1DC1-1A00-E1D4E6FA63CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48D366CE-8CEE-1DC1-1A00-E1D4E6FA63CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48D366CE-8CEE-1DC1-1A00-E1D4E6FA63CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48D366CE-8CEE-1DC1-1A00-E1D4E6FA63CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64519B76-C080-F68E-9D7C-274BF37AA4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64519B76-C080-F68E-9D7C-274BF37AA4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64519B76-C080-F68E-9D7C-274BF37AA4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64519B76-C080-F68E-9D7C-274BF37AA4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AA36C69-D2C0-4BE2-9B2B-3C4C7E9AB029}
+	EndGlobalSection
+EndGlobal

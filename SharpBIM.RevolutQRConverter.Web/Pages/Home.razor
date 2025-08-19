@@ -1,0 +1,189 @@
+﻿@inherits ComponentBase
+@page "/"
+@using System
+@using System.Drawing
+@using System.Drawing.Imaging
+@using System.Globalization
+@using System.Text.Json
+@using SharpBIM.RevolutQRConverter.Shared
+
+
+<style>
+    /* General text styling */
+    span {
+        color: white;
+        font-size: 16px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    strong {
+        color: white;
+        font-size: 18px;
+    }
+
+    /* Background container */
+    .background-container {
+        background-size: cover; /* cover entire div */
+        background-position: center; /* center the image */
+        background-repeat: no-repeat;
+        min-height: 100vh; /* fill the viewport */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 40px 20px;
+        box-sizing: border-box;
+    }
+
+    /* Camera controls */
+    #cameraSelect, button {
+        margin: 5px;
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+
+    #reader {
+        margin-top: 20px;
+        width: 500px;
+        max-width: 90%;
+    }
+
+    #qrcode {
+        margin-top: 20px;
+    }
+
+    /* Property list */
+    .property-item {
+        margin-top: 8px;
+        color: white;
+    }
+
+        .property-item strong {
+            width: 120px;
+            display: inline-block;
+        }
+
+    .properties-grid {
+        display: grid;
+        grid-template-columns: 200px 1fr; /* label fixed, value flexible */
+        gap: 8px 16px;
+        align-items: start;
+        max-width: 600px; /* control the width */
+        margin: 0 auto; /* center horizontally */
+        text-align: left; /* align text properly */
+    }
+
+    .property-name {
+        font-weight: bold;
+        color:white;
+        white-space: nowrap; /* prevent breaking long labels */
+    }
+
+    .property-value {
+        color:white;
+        word-break: break-word; /* wrap long values nicely */
+    }
+
+    a {
+        color: #4fc3f7;
+        text-decoration: none;
+    }
+
+</style>
+
+<div class="background-container">
+    <img src="imgs/sharpBim500_120.png" alt="SharpBIM Logo" width="500" height="120" />
+
+    <strong>Developed by SharpBIM</strong>
+    <span>This is to help scanning Slovenian UPN QR code via Revolut app.</span>
+    <span>There is also a desktop and Android version available.</span>
+    
+    <a href="downloads/SharpBIM.RevolutQRConverter.apk" download>Download Android app</a>
+  
+   
+    
+    <a href="/privacypolicy" target="_blank">Privacy Policy</a>
+
+    <div style="margin-top:25px">
+        <select id="cameraSelect"></select>
+        <button @onclick="RequestCamera">Load available cameras</button>
+        <span>@cameraState</span>
+    </div>
+
+    <div id="reader"></div>
+
+    <p style="color:white; margin-top:20px;">Scanned QR Code:</p>
+    <button @onclick="Scan">Scan and convert To Revolut QR Code</button>
+        <div style="padding:5px;   background-color:white;" id="qrcode"></div>
+    <div class="properties-grid" style="margin-top:50px">
+        @foreach (var property in properties)
+        {
+            <div class="property-name">@property.Name:</div>
+            <label class="property-value" @onclick="()=>CopyValue(property.Name, property.Value)" >@property.Value</label>
+        }
+    </div>
+</div>
+
+
+
+@code {
+
+    public string cameraState { get; set; }
+    List<PropertyItem> properties = [];
+    [Inject]
+    public IJSRuntime JS { get; set; }
+
+   
+
+
+    private async Task RequestCamera()
+    {
+        try
+        {
+            await JS.InvokeAsync<string>("GetQR", "Hello");
+
+            await JS.InvokeVoidAsync("initCameraList");
+
+        }
+        catch (JSException jsEx)
+        {
+            var permission = await JS.InvokeAsync<string>("checkCameraPermission", "camera" );
+            cameraState =$"Camera permission: {permission}";
+
+        }
+    }
+
+    [JSInvokable]
+    public void ReceiveQrCode(string code)
+    {
+        StateHasChanged();
+    }
+
+    
+    [JSInvokable]
+    async public Task ReceiveFullResult(string json)
+    {
+        var fullResultJson = json;
+        var jdoc = JsonDocument.Parse(json);
+        var ele = jdoc.RootElement.GetProperty("decodedText").GetString();
+        var scannedClass = UpnQrParser.Parse(ele);
+
+        var epc = UpnQrParser.ConvertToRevolutString(scannedClass);
+        await JS.InvokeAsync<string>("GetQR", epc);
+        properties = UpnQrParser.LoadProperties(scannedClass);
+        StateHasChanged();
+    }
+
+  
+    async private void Scan(MouseEventArgs args)
+    {
+        await JS.InvokeVoidAsync("startQrScanner", DotNetObjectReference.Create(this));
+    }
+   async private void CopyValue(string propName, string args)
+    {
+        string formatted = UpnQrParser.FormatPropertyValue(propName, args);
+        await JS.InvokeVoidAsync("copyText", formatted);
+
+    }
+}

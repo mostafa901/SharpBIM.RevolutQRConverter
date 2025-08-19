@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SharpBIM.RevolutQRConverter.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:SharpBIM.RevolutQRConverter;assembly=SharpBIM.RevolutQRConverter"
+             xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+             xmlns:local="clr-namespace:SharpBIM.RevolutQRConverter"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             Padding="0"
+             Background="#1e1e1e">
+
+    <Grid Padding="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Source="slov2revqr.png"
+                   VerticalOptions="Start" />
+            <StackLayout Grid.Column="1"
+                         VerticalOptions="End">
+
+                <Label Grid.Column="1"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       HorizontalOptions="End"
+                       Text="Slovenian UPN QR Converter"
+                       TextColor="White"
+                       VerticalOptions="Center" />
+
+                <Label Grid.Column="1"
+                       FontAttributes="Bold"
+                       FontSize="13"
+                       HorizontalOptions="End"
+                       Text="{Binding Version}"
+                       TextColor="White"
+                       VerticalOptions="End" />
+
+            </StackLayout>
+        </Grid>
+
+        <Grid Grid.Row="1"
+              Padding="0,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Button Background="#2E2E2E"
+                    Clicked="OnStartScanClicked"
+                    Text="Start Scanning"
+                    TextColor="White" />
+
+            <Label Grid.Row="1"
+                   FontAttributes="Bold"
+                   HorizontalOptions="End"
+                   Text="Privacy Policy"
+                   TextColor="Cyan">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer NumberOfTapsRequired="1"
+                                          Tapped="OnPrivacyPolicyTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <ScrollView Grid.Row="2">
+
+                <StackLayout>
+                    <zxing:BarcodeGeneratorView Grid.Row="1"
+                                                Margin="3"
+                                                ForegroundColor="DarkBlue"
+                                                Format="QrCode"
+                                                HeightRequest="250"
+                                                WidthRequest="250"
+                                                Value="{Binding RevolutValue}" />
+                    <CollectionView ItemsSource="{Binding Properties}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Text="{Binding Name}" />
+
+                                    <Editor Grid.Column="1"
+                                            IsReadOnly="True"
+                                            AutomationId="{Binding Name}"
+                                            Text="{Binding Value}">
+                                        <Editor.GestureRecognizers>
+
+                                            <TapGestureRecognizer Tapped="Frame_Tapped" />
+                                        </Editor.GestureRecognizers>
+                                    </Editor>
+
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </Grid>
+</ContentPage>
+
