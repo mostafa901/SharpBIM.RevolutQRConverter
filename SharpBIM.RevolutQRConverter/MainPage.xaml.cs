@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using SharpBIM.RevolutQRConverter.Pages;
 
 using SharpBIM.RevolutQRConverter.Shared;
-using System.Reflection;
 
 namespace SharpBIM.RevolutQRConverter;
 
@@ -22,13 +21,11 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         QrService.QrCodeDecoded += QrService_QrCodeDecoded;
 
         Version = $"ver. {Assembly.GetExecutingAssembly().GetName().Version}";
-
     }
 
-    async private void QrService_QrCodeDecoded(object? sender, string e)
+    private async void QrService_QrCodeDecoded(object? sender, string e)
     {
         await ParseandLoad(e);
-
     }
 
     private string _version;
@@ -48,8 +45,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     public ObservableCollection<PropertyItem> Properties { get; set; } = new();
 
-
-
     private string _revolutValue;
 
     public string RevolutValue
@@ -67,28 +62,33 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         var scanner = new Scanner(async (x) =>
         {
             await Navigation.PopModalAsync();
-
             await ParseandLoad(x);
         });
 
         await Navigation.PushModalAsync(scanner);
     }
 
-    async private Task ParseandLoad(string x)
+    private async Task ParseandLoad(string x)
     {
         if (!string.IsNullOrEmpty(x))
         {
-            var scannedUPN = UpnQrParser.Parse(x);
-            RevolutValue = UpnQrParser.ConvertToRevolutString(scannedUPN);
-            await ClipBoardService.CopyToClipboardAsync(scannedUPN.ReferenceNumber);
-            await ClipBoardService.CopyToClipboardAsync(scannedUPN.Amount.ToString());
-            Properties.Clear();
-            var data = UpnQrParser.LoadProperties(scannedUPN);
-            foreach (var item in data)
+            try
             {
-                Properties.Add(item);
+                var scannedUPN = UpnQrParser.Parse(x);
+                RevolutValue = UpnQrParser.ConvertToRevolutString(scannedUPN);
+                await ClipBoardService.CopyToClipboardAsync(scannedUPN.ReferenceNumber);
+                await ClipBoardService.CopyToClipboardAsync(scannedUPN.Amount.ToString());
+                Properties.Clear();
+                var data = UpnQrParser.LoadProperties(scannedUPN);
+                foreach (var item in data)
+                {
+                    Properties.Add(item);
+                }
             }
-
+            catch (Exception)
+            {
+                await Application.Current.MainPage.DisplayAlert("Not Supported", "QRCode not supported", "Ok");
+            }
         }
     }
 
@@ -106,13 +106,11 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         await ClipBoardService.CopyToClipboardAsync(formatted);
     }
 
-    async private void OnPrivacyPolicyTapped(object sender, TappedEventArgs e)
+    private async void OnPrivacyPolicyTapped(object sender, TappedEventArgs e)
     {
         try
         {
-            // await  Navigation.PushModalAsync(new PrivacyPolicyPage());
-            Microsoft.Maui.ApplicationModel.Browser.OpenAsync("https://slov-qr-revolout.tryasp.net/privacypolicy", Microsoft.Maui.ApplicationModel.BrowserLaunchMode.SystemPreferred);
-
+            await Microsoft.Maui.ApplicationModel.Browser.OpenAsync("https://slov-qr-revolout.tryasp.net/privacypolicy", Microsoft.Maui.ApplicationModel.BrowserLaunchMode.SystemPreferred);
         }
         catch (Exception ex)
         {

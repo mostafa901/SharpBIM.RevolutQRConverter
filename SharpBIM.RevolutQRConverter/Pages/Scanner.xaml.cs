@@ -20,6 +20,20 @@ public partial class Scanner : ContentPage
             Formats =
                     BarcodeFormat.QrCode |
                     BarcodeFormat.DataMatrix |
+                    BarcodeFormat.UpcE |
+                    BarcodeFormat.UpcA |
+                    BarcodeFormat.RssExpanded |
+                    BarcodeFormat.Rss14 |
+                    BarcodeFormat.UpcEanExtension|
+                    BarcodeFormat.Ean8 |
+                    BarcodeFormat.Codabar |
+                    BarcodeFormat.Code128 |
+                    BarcodeFormat.Code39 |
+                    BarcodeFormat.Code93|
+                    BarcodeFormat.Ean13 |
+                    BarcodeFormat.Imb |
+                    BarcodeFormat.Itf |
+                    BarcodeFormat.Msi |
                     BarcodeFormat.Aztec
                 ,
             Multiple = false,
